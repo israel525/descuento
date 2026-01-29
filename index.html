@@ -440,20 +440,35 @@
             return valor.replace(/[^0-9.]/g, '');
         }
 
-        // Manejar input de precio con formato
+        // Manejar input de precio con formato en tiempo real
         precioInput.addEventListener('input', function(e) {
             let valor = e.target.value;
-            valor = limpiarFormato(valor);
+            // Remover todo excepto números y punto
+            let valorLimpio = valor.replace(/[^0-9.]/g, '');
             
-            if (valor) {
-                const numero = parseFloat(valor);
-                if (!isNaN(numero)) {
-                    e.target.value = numero.toLocaleString('es-MX', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                }
+            // Evitar múltiples puntos decimales
+            const partes = valorLimpio.split('.');
+            if (partes.length > 2) {
+                valorLimpio = partes[0] + '.' + partes.slice(1).join('');
             }
+            
+            // Separar parte entera y decimal
+            const [parteEntera, parteDecimal] = valorLimpio.split('.');
+            
+            // Formatear parte entera con comas
+            let parteEnteraFormateada = '';
+            if (parteEntera) {
+                parteEnteraFormateada = parseInt(parteEntera).toLocaleString('es-MX');
+            }
+            
+            // Reconstruir el valor con formato
+            let valorFormateado = parteEnteraFormateada;
+            if (valorLimpio.includes('.')) {
+                valorFormateado += '.' + (parteDecimal || '');
+            }
+            
+            // Actualizar el input
+            e.target.value = valorFormateado;
         });
 
         // Validar y limitar descuentos (1-100)
