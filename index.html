@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Descuentos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #a8e6cf;
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #a8e6cf;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #a8e6cf;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #95d9bc;
+        }
+
+        .privacy-note {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 16px;
+        }
+
+        /* App Container */
+        .app-container {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 48px;
+            height: 48px;
+            background: #2a2a2a;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: #333;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+            position: absolute;
+            transition: all 0.3s;
+        }
+
+        .menu-icon span:nth-child(1) { top: 0; }
+        .menu-icon span:nth-child(2) { top: 8px; }
+        .menu-icon span:nth-child(3) { top: 16px; }
+
+        /* Clear Button */
+        .clear-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: #2a2a2a;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .clear-btn:hover {
+            background: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            z-index: 2000;
+            transition: left 0.3s;
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-btn {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 24px;
+            height: 24px;
+            background: #a8e6cf;
+            border: 2px solid #1a1a1a;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .username {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            padding: 16px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: transparent;
+            border: none;
+            width: 100%;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #2a2a2a;
+        }
+
+        .menu-item.active {
+            background: #2a2a2a;
+            border-left: 3px solid #a8e6cf;
+        }
+
+        /* Calculator */
+        .calculator-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .calculator-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .calculator-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #a8e6cf;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 24px;
+            background: linear-gradient(135deg, rgba(168, 230, 207, 0.9), rgba(168, 230, 207, 0.7));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculate-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168, 230, 207, 0.4);
+        }
+
+        .results {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #333;
+        }
+
+        .result-item {
+            margin-bottom: 16px;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #a8e6cf;
+        }
+
+        .result-value.final {
+            font-size: 20px;
+        }
+
+        .savings {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Reminders */
+        .reminders-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .reminders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .reminders-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+        }
+
+        .notifications-btn {
+            padding: 10px 20px;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .notifications-btn:hover {
+            background: #333;
+        }
+
+        .reminder-form {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .filter-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .filter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-card.active {
+            border-color: #a8e6cf;
+        }
+
+        .filter-card.expired {
+            background: rgba(255, 182, 193, 0.1);
+        }
+
+        .filter-card.all {
+            background: rgba(168, 230, 207, 0.1);
+        }
+
+        .filter-card.soon {
+            background: rgba(255, 223, 186, 0.1);
+        }
+
+        .filter-card.completed {
+            background: rgba(168, 230, 207, 0.1);
+        }
+
+        .card-count {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-label {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .reminders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .reminder-item {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .reminder-item.completed .reminder-title,
+        .reminder-item.completed .reminder-description {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .reminder-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .reminder-description {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .reminder-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .traffic-light.green {
+            background: #a8e6cf;
+        }
+
+        .traffic-light.yellow {
+            background: #ffdeba;
+        }
+
+        .traffic-light.red {
+            background: #ffb6c1;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            background: #2a2a2a;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .icon-btn:hover {
+            background: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.4s;
+        }
+
+        @media (max-width: 640px) {
+            .calculator-title {
+                font-size: 28px;
+            }
+
+            .calculator-card {
+                padding: 24px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">Calculadora de<br>Descuentos</h1>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('login')">Iniciar Sesión</button>
+                <button class="tab" onclick="switchTab('register')">Registrarse</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre de Usuario</label>
+                    <input type="text" class="form-input" id="loginUsername" placeholder="Ej: juanperez" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña (6 dígitos)</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required>
+                    <p class="form-hint">Solo números, exactamente 6 dígitos</p>
+                </div>
+                <button type="submit" class="btn-primary">Iniciar Sesión</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre de Usuario</label>
+                    <input type="text" class="form-input" id="registerUsername" placeholder="Ej: juanperez" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña (6 dígitos)</label>
+                    <input type="password" class="form-input" id="registerPassword" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required>
+                    <p class="form-hint">Solo números, exactamente 6 dígitos</p>
+                </div>
+                <button type="submit" class="btn-primary">Crear Cuenta</button>
+            </form>
+
+            <p class="privacy-note">Tus datos se guardan localmente en tu dispositivo</p>
+        </div>
+    </div>
+
+    <!-- App Screen -->
+    <div id="appScreen" class="app-container hidden">
+        <!-- Menu Button -->
+        <button class="menu-btn" onclick="toggleSidebar()">
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+
+        <!-- Clear Button -->
+        <button class="clear-btn" onclick="clearCalculator()">✕</button>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <p class="sidebar-title">Usuario</p>
+                <div class="user-info">
+                    <div class="avatar-container">
+                        <div class="avatar" id="sidebarAvatar">
+                            <span>👤</span>
+                        </div>
+                        <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="handleAvatarChange(event)">
+                        <button class="avatar-btn" onclick="document.getElementById('avatarInput').click()">📷</button>
+                    </div>
+                    <span class="username" id="sidebarUsername"></span>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <button class="menu-item active" onclick="showSection('calculator')">
+                    🧮 Calculadora de Descuentos
+                </button>
+                <button class="menu-item" onclick="showSection('reminders')">
+                    🧠 Recordatorios
+                </button>
+                <button class="menu-item" onclick="logout()">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
+        </div>
+
+        <!-- Calculator Section -->
+        <div id="calculatorSection" class="calculator-container">
+            <h1 class="calculator-title">Calculadora de<br>Descuentos</h1>
+            
+            <div class="calculator-card">
+                <div class="input-group">
+                    <label class="input-label">Precio Original</label>
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #888;">$</span>
+                        <input type="text" id="precio" class="input-field" placeholder="0.00" style="padding-left: 32px;" oninput="formatPrice(this)">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Primer Descuento (%)</label>
+                    <div style="position: relative;">
+                        <input type="number" id="descuento1" class="input-field" placeholder="0" min="1" max="100" oninput="validateDiscount(this)">
+                        <span style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #888;">%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Segundo Descuento (%) - Opcional</label>
+                    <div style="position: relative;">
+                        <input type="number" id="descuento2" class="input-field" placeholder="0" min="1" max="100" oninput="validateDiscount(this)">
+                        <span style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #888;">%</span>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calcular()">Calcular</button>
+
+                <div id="results" class="results hidden"></div>
+            </div>
+        </div>
+
+        <!-- Reminders Section -->
+        <div id="remindersSection" class="reminders-container hidden">
+            <div class="reminders-header">
+                <h1 class="reminders-title">Mis Recordatorios</h1>
+                <button class="notifications-btn" onclick="requestNotificationPermission()">🔔 Notificaciones</button>
+            </div>
+
+            <div class="reminder-form">
+                <div class="input-group">
+                    <label class="input-label">Título</label>
+                    <input type="text" id="reminderTitle" class="input-field" placeholder="Ej: Comprar televisión">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Descripción</label>
+                    <input type="text" id="reminderDescription" class="input-field" placeholder="TV 55 pulgadas con descuento">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">📅 Fecha de Finalización (Opcional)</label>
+                    <input type="date" id="reminderDate" class="input-field">
+                </div>
+                <button class="calculate-btn" onclick="addReminder()">Agregar Recordatorio</button>
+            </div>
+
+            <div class="cards-grid">
+                <div class="filter-card expired" onclick="filterReminders('expired')">
+                    <div class="card-count" id="expiredCount">0</div>
+                    <div class="card-label">Vencidos</div>
+                </div>
+                <div class="filter-card all active" onclick="filterReminders('all')">
+                    <div class="card-count" id="allCount">0</div>
+                    <div class="card-label">Todos</div>
+                </div>
+                <div class="filter-card soon" onclick="filterReminders('soon')">
+                    <div class="card-count" id="soonCount">0</div>
+                    <div class="card-label">Próximos</div>
+                </div>
+                <div class="filter-card completed" onclick="filterReminders('completed')">
+                    <div class="card-count" id="completedCount">0</div>
+                    <div class="card-label">Cumplidos</div>
+                </div>
+            </div>
+
+            <div id="remindersList" class="reminders-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentUser = null;
+        let currentFilter = 'all';
+        let notificationInterval = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        // Auth Functions
+        function checkAuth() {
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                currentUser = user;
+                showApp();
+            }
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            
+            if (users[username] && users[username].password === password) {
+                currentUser = username;
+                localStorage.setItem('currentUser', username);
+                showApp();
+            } else {
+                alert('Usuario o contraseña incorrectos');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            
+            if (users[username]) {
+                alert('El usuario ya existe');
+                return;
+            }
+
+            users[username] = { password };
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            currentUser = username;
+            localStorage.setItem('currentUser', username);
+            showApp();
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+            document.getElementById('sidebarUsername').textContent = currentUser;
+            loadAvatar();
+            loadReminders();
+            startNotificationCheck();
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('appScreen').classList.add('hidden');
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+        }
+
+        // Avatar Functions
+        function loadAvatar() {
+            const avatarData = localStorage.getItem(`avatar_${currentUser}`);
+            const avatarEl = document.getElementById('sidebarAvatar');
+            
+            if (avatarData) {
+                avatarEl.innerHTML = `<img src="${avatarData}" alt="Avatar">`;
+            } else {
+                avatarEl.innerHTML = '<span>👤</span>';
+            }
+        }
+
+        function handleAvatarChange(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona una imagen');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('La imagen debe ser menor a 2MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const imageData = event.target.result;
+                localStorage.setItem(`avatar_${currentUser}`, imageData);
+                loadAvatar();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // UI Functions
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function showSection(section) {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+            
+            if (section === 'calculator') {
+                document.getElementById('calculatorSection').classList.remove('hidden');
+                document.getElementById('remindersSection').classList.add('hidden');
+                menuItems[0].classList.add('active');
+            } else {
+                document.getElementById('calculatorSection').classList.add('hidden');
+                document.getElementById('remindersSection').classList.remove('hidden');
+                menuItems[1].classList.add('active');
+                loadReminders();
+            }
+            
+            toggleSidebar();
+        }
+
+        // Calculator Functions
+        function formatPrice(input) {
+            let value = input.value.replace(/[^0-9.]/g, '');
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            input.value = parts.join('.');
+        }
+
+        function validateDiscount(input) {
+            let value = parseInt(input.value);
+            if (value > 100) {
+                input.value = 100;
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 400);
+            } else if (value < 1 && input.value !== '') {
+                input.value = 1;
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 400);
+            }
+        }
+
+        function clearCalculator() {
+            document.getElementById('precio').value = '';
+            document.getElementById('descuento1').value = '';
+            document.getElementById('descuento2').value = '';
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function calcular() {
+            const precioStr = document.getElementById('precio').value.replace(/,/g, '');
+            const descuento1 = parseFloat(document.getElementById('descuento1').value) || 0;
+            const descuento2 = parseFloat(document.getElementById('descuento2').value) || 0;
+
+            if (!precioStr || descuento1 === 0) {
+                alert('Por favor ingresa el precio original y al menos un descuento');
+                return;
+            }
+
+            const precioOriginal = parseFloat(precioStr);
+            let precioFinal = precioOriginal;
+            let resultHTML = '';
+
+            if (descuento2 > 0) {
+                const despuesPrimero = precioOriginal * (1 - descuento1 / 100);
+                const despuesSegundo = despuesPrimero * (1 - descuento2 / 100);
+                precioFinal = despuesSegundo;
+
+                resultHTML = `
+                    <div class="result-item">
+                        <div class="result-label">Después del primer descuento (${descuento1}%)</div>
+                        <div class="result-value">$${despuesPrimero.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Después del segundo descuento (${descuento2}%)</div>
+                        <div class="result-value">$${despuesSegundo.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Precio Final</div>
+                        <div class="result-value final">$${precioFinal.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                `;
+            } else {
+                precioFinal = precioOriginal * (1 - descuento1 / 100);
+                resultHTML = `
+                    <div class="result-item">
+                        <div class="result-label">Precio Final</div>
+                        <div class="result-value final">$${precioFinal.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                `;
+            }
+
+            const ahorro = precioOriginal - precioFinal;
+            resultHTML += `
+                <div class="result-item">
+                    <div class="savings">Te ahorras: $${ahorro.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                </div>
+            `;
+
+            document.getElementById('results').innerHTML = resultHTML;
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        // Reminders Functions
+        function getReminders() {
+            const key = `reminders_${currentUser}`;
+            return JSON.parse(localStorage.getItem(key) || '[]');
+        }
+
+        function saveReminders(reminders) {
+            const key = `reminders_${currentUser}`;
+            localStorage.setItem(key, JSON.stringify(reminders));
+        }
+
+        function addReminder() {
+            const title = document.getElementById('reminderTitle').value;
+            const description = document.getElementById('reminderDescription').value;
+            const date = document.getElementById('reminderDate').value;
+
+            if (!title) {
+                alert('Por favor ingresa un título');
+                return;
+            }
+
+            const reminders = getReminders();
+            const newReminder = {
+                id: Date.now(),
+                title,
+                description,
+                dueDate: date || null,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            reminders.push(newReminder);
+            saveReminders(reminders);
+
+            document.getElementById('reminderTitle').value = '';
+            document.getElementById('reminderDescription').value = '';
+            document.getElementById('reminderDate').value = '';
+
+            loadReminders();
+        }
+
+        function deleteReminder(id) {
+            const reminders = getReminders();
+            const filtered = reminders.filter(r => r.id !== id);
+            saveReminders(filtered);
+            loadReminders();
+        }
+
+        function toggleCompleted(id) {
+            const reminders = getReminders();
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                reminder.completed = !reminder.completed;
+                saveReminders(reminders);
+                loadReminders();
+            }
+        }
+
+        function getDaysUntilDue(dueDate) {
+            if (!dueDate) return null;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const due = new Date(dueDate);
+            due.setHours(0, 0, 0, 0);
+            const diff = due - today;
+            return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        }
+
+        function getTrafficLight(daysUntil) {
+            if (daysUntil === null) return '';
+            if (daysUntil < 0) return 'red';
+            if (daysUntil <= 3) return 'red';
+            if (daysUntil <= 7) return 'yellow';
+            return 'green';
+        }
+
+        function filterReminders(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('.filter-card');
+            cards.forEach(card => card.classList.remove('active'));
+            
+            if (filter === 'expired') cards[0].classList.add('active');
+            else if (filter === 'all') cards[1].classList.add('active');
+            else if (filter === 'soon') cards[2].classList.add('active');
+            else if (filter === 'completed') cards[3].classList.add('active');
+            
+            loadReminders();
+        }
+
+        function loadReminders() {
+            const reminders = getReminders();
+            
+            // Update counts
+            const expired = reminders.filter(r => !r.completed && r.dueDate && getDaysUntilDue(r.dueDate) < 0).length;
+            const active = reminders.filter(r => !r.completed).length;
+            const soon = reminders.filter(r => !r.completed && r.dueDate && getDaysUntilDue(r.dueDate) >= 0 && getDaysUntilDue(r.dueDate) <= 7).length;
+            const completed = reminders.filter(r => r.completed).length;
+            
+            document.getElementById('expiredCount').textContent = expired;
+            document.getElementById('allCount').textContent = active;
+            document.getElementById('soonCount').textContent = soon;
+            document.getElementById('completedCount').textContent = completed;
+
+            // Filter reminders
+            let filtered = reminders;
+            if (currentFilter === 'expired') {
+                filtered = reminders.filter(r => !r.completed && r.dueDate && getDaysUntilDue(r.dueDate) < 0);
+            } else if (currentFilter === 'all') {
+                filtered = reminders.filter(r => !r.completed);
+            } else if (currentFilter === 'soon') {
+                filtered = reminders.filter(r => !r.completed && r.dueDate && getDaysUntilDue(r.dueDate) >= 0 && getDaysUntilDue(r.dueDate) <= 7);
+            } else if (currentFilter === 'completed') {
+                filtered = reminders.filter(r => r.completed);
+            }
+
+            const listEl = document.getElementById('remindersList');
+            
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <p>No hay recordatorios en esta categoría</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(reminder => {
+                const daysUntil = getDaysUntilDue(reminder.dueDate);
+                const trafficLight = getTrafficLight(daysUntil);
+                const completedClass = reminder.completed ? 'completed' : '';
+                
+                let dueDateHTML = '';
+                if (reminder.dueDate) {
+                    const dueText = daysUntil === null ? '' : 
+                                   daysUntil < 0 ? `Vencido hace ${Math.abs(daysUntil)} días` :
+                                   daysUntil === 0 ? 'Vence hoy' :
+                                   `Faltan ${daysUntil} días`;
+                    
+                    dueDateHTML = `
+                        <div class="reminder-meta">
+                            ${trafficLight ? `<span class="traffic-light ${trafficLight}"></span>` : ''}
+                            <span>📅 ${reminder.dueDate}</span>
+                            ${dueText ? `<span>${dueText}</span>` : ''}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="reminder-item ${completedClass}">
+                        <div class="reminder-header">
+                            <div style="flex: 1;">
+                                <div class="reminder-title">${reminder.title}</div>
+                                ${reminder.description ? `<div class="reminder-description">${reminder.description}</div>` : ''}
+                                ${dueDateHTML}
+                            </div>
+                            <div class="reminder-actions">
+                                <button class="icon-btn" onclick="toggleCompleted(${reminder.id})" title="${reminder.completed ? 'Marcar como pendiente' : 'Marcar como cumplido'}">
+                                    ${reminder.completed ? '↩️' : '✓'}
+                                </button>
+                                <button class="icon-btn" onclick="deleteReminder(${reminder.id})" title="Eliminar">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Notifications
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('Tu navegador no soporta notificaciones');
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    alert('Notificaciones activadas');
+                } else {
+                    alert('Permisos de notificación denegados');
+                }
+            });
+        }
+
+        function checkAndSendNotifications() {
+            if (!('Notification' in window) || Notification.permission !== 'granted') {
+                return;
+            }
+
+            const reminders = getReminders();
+            const notifiedKey = `notified_${currentUser}`;
+            const notified = JSON.parse(localStorage.getItem(notifiedKey) || '{}');
+
+            reminders.forEach(reminder => {
+                if (reminder.completed || !reminder.dueDate) return;
+
+                const daysUntil = getDaysUntilDue(reminder.dueDate);
+                const shouldNotify = daysUntil !== null && daysUntil >= 0 && daysUntil <= 2;
+
+                if (shouldNotify && !notified[reminder.id]) {
+                    new Notification('Recordatorio próximo a vencer', {
+                        body: `${reminder.title} - ${daysUntil === 0 ? 'Vence hoy' : `Vence en ${daysUntil} días`}`,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">🛍️</text></svg>'
+                    });
+                    notified[reminder.id] = true;
+                    localStorage.setItem(notifiedKey, JSON.stringify(notified));
+                }
+            });
+        }
+
+        function startNotificationCheck() {
+            checkAndSendNotifications();
+            notificationInterval = setInterval(checkAndSendNotifications, 3600000); // Check every hour
+        }
+
+        // Enter key support
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const activeSection = document.querySelector('.calculator-container:not(.hidden)');
+                if (activeSection) {
+                    calcular();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
