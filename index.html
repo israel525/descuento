@@ -732,9 +732,242 @@
             opacity: 0.3;
         }
 
+        /* Mobile Optimizations */
         @media (max-width: 640px) {
+            /* Reduce font sizes for mobile */
+            .page-title {
+                font-size: 28px;
+                margin-bottom: 6px;
+            }
+
+            .page-subtitle {
+                font-size: 12px;
+                margin-bottom: 24px;
+            }
+
+            .login-title {
+                font-size: 28px;
+                margin-bottom: 24px;
+            }
+
+            .login-card {
+                padding: 32px 24px;
+            }
+
+            /* Optimize main content padding */
+            .main-content {
+                padding: 70px 16px 32px;
+            }
+
+            /* Increase touch target sizes */
+            .btn-primary,
+            .btn-calculate {
+                padding: 16px;
+                font-size: 15px;
+                min-height: 48px;
+            }
+
+            .tab {
+                padding: 14px 12px;
+                font-size: 13px;
+            }
+
+            .input-field {
+                padding: 14px 16px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                min-height: 48px;
+            }
+
+            .form-input {
+                padding: 14px 16px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                min-height: 48px;
+            }
+
+            /* Optimize calculator container */
+            .calculator-container {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                margin-bottom: 14px;
+            }
+
+            .input-label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+
+            /* Optimize reminder form */
+            .reminder-form {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            /* Single column for reminder cards */
             .reminder-cards {
                 grid-template-columns: 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .reminder-card {
+                padding: 14px;
+            }
+
+            .card-count {
+                font-size: 20px;
+            }
+
+            .card-label {
+                font-size: 11px;
+            }
+
+            /* Optimize reminder items */
+            .reminder-item {
+                padding: 14px;
+            }
+
+            .reminder-title {
+                font-size: 15px;
+            }
+
+            .reminder-description {
+                font-size: 13px;
+            }
+
+            .reminder-meta {
+                font-size: 11px;
+                gap: 8px;
+            }
+
+            /* Increase button sizes for touch */
+            .btn-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .menu-button {
+                width: 44px;
+                height: 44px;
+                top: 16px;
+                left: 16px;
+            }
+
+            .btn-clear {
+                width: 44px;
+                height: 44px;
+                top: 16px;
+                right: 16px;
+            }
+
+            /* Optimize sidebar for mobile */
+            .sidebar {
+                width: 280px;
+                left: -280px;
+            }
+
+            .sidebar-header {
+                padding: 20px;
+            }
+
+            .avatar {
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+            }
+
+            .username {
+                font-size: 16px;
+            }
+
+            .nav-item {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+
+            /* Optimize results display */
+            .results {
+                padding: 16px;
+                margin-top: 20px;
+            }
+
+            .result-label {
+                font-size: 11px;
+            }
+
+            .result-value {
+                font-size: 15px;
+            }
+
+            .final-price .result-label {
+                font-size: 13px;
+            }
+
+            .final-price .result-value {
+                font-size: 18px;
+            }
+
+            .savings {
+                font-size: 13px;
+            }
+
+            /* Optimize reminders header */
+            .reminders-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .btn-notifications {
+                width: 100%;
+                justify-content: center;
+                padding: 10px 16px;
+            }
+
+            /* Ensure proper spacing on small screens */
+            .reminder-list {
+                gap: 10px;
+            }
+
+            /* Optimize empty state */
+            .empty-state {
+                padding: 32px 16px;
+            }
+
+            .empty-state svg {
+                width: 48px;
+                height: 48px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 375px) {
+            .page-title {
+                font-size: 24px;
+            }
+
+            .login-title {
+                font-size: 24px;
+            }
+
+            .main-content {
+                padding: 65px 12px 28px;
+            }
+
+            .calculator-container,
+            .reminder-form {
+                padding: 16px;
+            }
+
+            .reminder-card {
+                padding: 12px;
+            }
+
+            .card-count {
+                font-size: 18px;
             }
         }
     </style>
@@ -935,7 +1168,36 @@
                         </svg>
                         Fecha de Finalización (Opcional)
                     </label>
-                    <input type="date" class="input-field" id="reminderDueDate">
+                    <input type="date" class="input-field" id="reminderDueDate" onchange="toggleTimeInputs()">
+                </div>
+                <div class="input-group" id="timeInputGroup" style="display: none;">
+                    <label class="input-label">
+                        <svg class="icon icon-sm" style="display: inline-block; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Hora de Finalización
+                    </label>
+                    <input type="time" class="input-field" id="reminderDueTime">
+                </div>
+                <div class="input-group" id="notificationTimeGroup" style="display: none;">
+                    <label class="input-label">
+                        <svg class="icon icon-sm" style="display: inline-block; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Notificarme antes
+                    </label>
+                    <select class="input-field" id="notificationTime">
+                        <option value="1440">1 día antes</option>
+                        <option value="360">6 horas antes</option>
+                        <option value="180">3 horas antes</option>
+                        <option value="120">2 horas antes</option>
+                        <option value="60" selected>1 hora antes</option>
+                        <option value="10">10 minutos antes</option>
+                        <option value="5">5 minutos antes</option>
+                        <option value="1">1 minuto antes</option>
+                    </select>
                 </div>
                 <button class="btn-calculate" onclick="addReminder()">Agregar Recordatorio</button>
             </div>
@@ -1258,10 +1520,28 @@
             localStorage.setItem(key, JSON.stringify(reminders));
         }
 
+        function toggleTimeInputs() {
+            const dueDate = document.getElementById('reminderDueDate').value;
+            const timeInputGroup = document.getElementById('timeInputGroup');
+            const notificationTimeGroup = document.getElementById('notificationTimeGroup');
+            
+            if (dueDate) {
+                timeInputGroup.style.display = 'block';
+                notificationTimeGroup.style.display = 'block';
+            } else {
+                timeInputGroup.style.display = 'none';
+                notificationTimeGroup.style.display = 'none';
+                document.getElementById('reminderDueTime').value = '';
+                document.getElementById('notificationTime').value = '60';
+            }
+        }
+
         function addReminder() {
             const title = document.getElementById('reminderTitle').value;
             const description = document.getElementById('reminderDescription').value;
             const dueDate = document.getElementById('reminderDueDate').value;
+            const dueTime = document.getElementById('reminderDueTime').value;
+            const notificationTime = document.getElementById('notificationTime').value;
             
             if (!title) {
                 alert('Por favor ingresa un título');
@@ -1278,7 +1558,9 @@
                         ...reminders[index],
                         title,
                         description,
-                        dueDate: dueDate || null
+                        dueDate: dueDate || null,
+                        dueTime: dueTime || null,
+                        notificationTime: notificationTime || '60'
                     };
                 }
                 editingReminderId = null;
@@ -1289,6 +1571,8 @@
                     title,
                     description,
                     dueDate: dueDate || null,
+                    dueTime: dueTime || null,
+                    notificationTime: notificationTime || '60',
                     createdAt: new Date().toISOString(),
                     completed: false
                 };
@@ -1301,6 +1585,8 @@
             document.getElementById('reminderTitle').value = '';
             document.getElementById('reminderDescription').value = '';
             document.getElementById('reminderDueDate').value = '';
+            document.getElementById('reminderDueTime').value = '';
+            toggleTimeInputs();
             
             loadReminders();
         }
@@ -1313,7 +1599,12 @@
                 document.getElementById('reminderTitle').value = reminder.title;
                 document.getElementById('reminderDescription').value = reminder.description || '';
                 document.getElementById('reminderDueDate').value = reminder.dueDate || '';
+                document.getElementById('reminderDueTime').value = reminder.dueTime || '';
+                document.getElementById('notificationTime').value = reminder.notificationTime || '60';
                 editingReminderId = id;
+                
+                // Show time inputs if date exists
+                toggleTimeInputs();
                 
                 // Scroll to form
                 document.querySelector('.reminder-form').scrollIntoView({ behavior: 'smooth' });
@@ -1405,9 +1696,8 @@
                 listEl.innerHTML = `
                     <div class="empty-state">
                         <svg class="icon" viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path>
                         </svg>
                         <p>No hay recordatorios en esta categoría</p>
                     </div>
@@ -1457,6 +1747,7 @@
                             ${trafficLight}
                             ${reminder.dueDate ? `<span>${daysText}</span>` : ''}
                             ${reminder.dueDate ? `<span>•</span><span>${new Date(reminder.dueDate).toLocaleDateString('es-MX')}</span>` : ''}
+                            ${reminder.dueTime ? `<span>•</span><span>${reminder.dueTime}</span>` : ''}
                         </div>
                     </div>
                 `;
@@ -1485,17 +1776,44 @@
             
             const reminders = getReminders();
             const notified = JSON.parse(localStorage.getItem('notifiedReminders') || '[]');
+            const now = new Date();
             
             reminders.forEach(reminder => {
                 if (reminder.completed || !reminder.dueDate) return;
                 if (notified.includes(reminder.id)) return;
                 
-                const daysUntil = getDaysUntilDue(reminder.dueDate);
+                // Create due datetime
+                let dueDateTime = new Date(reminder.dueDate);
+                if (reminder.dueTime) {
+                    const [hours, minutes] = reminder.dueTime.split(':');
+                    dueDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                } else {
+                    dueDateTime.setHours(23, 59, 59, 999);
+                }
                 
-                if (daysUntil !== null && (daysUntil === 0 || daysUntil === 1 || daysUntil === 2)) {
+                // Calculate notification time based on user preference
+                const notificationMinutes = parseInt(reminder.notificationTime || '60');
+                const notificationTime = new Date(dueDateTime.getTime() - (notificationMinutes * 60 * 1000));
+                
+                // Check if it's time to notify
+                if (now >= notificationTime && now < dueDateTime) {
+                    const timeLeft = Math.floor((dueDateTime - now) / (1000 * 60));
+                    let timeText = '';
+                    
+                    if (timeLeft < 60) {
+                        timeText = `${timeLeft} minuto${timeLeft !== 1 ? 's' : ''}`;
+                    } else if (timeLeft < 1440) {
+                        const hours = Math.floor(timeLeft / 60);
+                        timeText = `${hours} hora${hours !== 1 ? 's' : ''}`;
+                    } else {
+                        const days = Math.floor(timeLeft / 1440);
+                        timeText = `${days} día${days !== 1 ? 's' : ''}`;
+                    }
+                    
                     new Notification('Recordatorio Próximo a Vencer', {
-                        body: `${reminder.title} - ${daysUntil === 0 ? 'Vence hoy' : `Vence en ${daysUntil} días`}`,
-                        icon: '/favicon.ico'
+                        body: `${reminder.title} - Vence en ${timeText}`,
+                        icon: '/favicon.ico',
+                        tag: `reminder-${reminder.id}`
                     });
                     
                     notified.push(reminder.id);
